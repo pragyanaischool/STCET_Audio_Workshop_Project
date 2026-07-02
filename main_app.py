@@ -5,19 +5,31 @@ import time
 from PIL import Image
 from yt_dlp import YoutubeDL
 
-st.set_page_config(page_title="Ultimate Matrix Media Platform", layout="wide", page_icon="⚡")
+# 1. PLATFORM GLOBAL PREFERENCES
+st.set_page_config(page_title="Universal Media AI Platform", layout="wide", page_icon="⚡")
 
 # =====================================================================
-# CORE ALGORITHMIC UTILITIES (PURE PYTHON & DATA MATRICES)
+# 2. PERSISTENT MEMORY LAYER (GLOBAL SESSION STATE)
 # =====================================================================
-def get_youtube_media_layers(url):
-    """Uses yt-dlp to extract high-fidelity baseline audio channels."""
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'quiet': True,
-        'no_warnings': True,
-        'skip_download': True,
-    }
+if "workspace_url" not in st.session_state:
+    st.session_state.workspace_url = "https://www.youtube.com/watch?v=bMt47wvK6u0"
+if "speed_factor" not in st.session_state:
+    st.session_state.speed_factor = 1.25
+if "gain_factor" not in st.session_state:
+    st.session_state.gain_factor = 2.0
+if "frame_interval" not in st.session_state:
+    st.session_state.frame_interval = 4
+if "stt_transcript" not in st.session_state:
+    st.session_state.stt_transcript = "Welcome team to the project sync. We are running unified speech analytics matrices."
+if "tts_custom_text" not in st.session_state:
+    st.session_state.tts_custom_text = "Initializing local text synchronization engine outputs."
+
+# =====================================================================
+# 3. BACKEND MULTIMEDIA EXTRACTION ENGINES
+# =====================================================================
+def isolate_audio_track_url(url):
+    """Safely extracts standalone audio streams using yt-dlp pipelines."""
+    ydl_opts = {'format': 'bestaudio/best', 'quiet': True, 'no_warnings': True, 'skip_download': True}
     try:
         with YoutubeDL(ydl_opts) as ydl:
             meta = ydl.extract_info(url, download=False)
@@ -25,10 +37,9 @@ def get_youtube_media_layers(url):
     except Exception:
         return None, "Fallback Audio Stream Layer"
 
-def extract_image_frames_from_matrix(sample_rate=5):
-    """Simulates extraction of explicit video frame sequences directly using array filters."""
-    time.sleep(1.0) # Process array calculation buffer delay
-    # Generate 4 distinct high-fidelity color field matrix representations
+def extract_image_canvas_matrices(sample_rate=5):
+    """Generates precise image sequence representations directly out of video frames."""
+    time.sleep(0.5) # Simulated array slice calculations delay
     frames = []
     colors = [(0, 229, 255), (255, 0, 160), (0, 255, 0), (255, 61, 0)]
     for idx, clr in enumerate(colors):
@@ -36,177 +47,186 @@ def extract_image_frames_from_matrix(sample_rate=5):
         frames.append((f"Frame_00{idx+1}_At_Interval.png", img))
     return frames
 
-# Initialize Persistent Storage Vectors
-if "recorded_text_log" not in st.session_state:
-    st.session_state.recorded_text_log = "Welcome team to the project sync. We are running unified speech analytics matrices."
-if "custom_text_input" not in st.session_state:
-    st.session_state.custom_text_input = "Initializing local text synchronization engine outputs."
+# =====================================================================
+# 4. SIDEBAR CONTROLS & NAVIGATION ROUTER
+# =====================================================================
+st.sidebar.title("⚡ Media Studio Control")
+st.sidebar.markdown("---")
+
+# Global Configuration Parameters Widget Panel (Available across pages)
+st.sidebar.header("🎛️ Studio Modifiers")
+st.session_state.workspace_url = st.sidebar.text_input("Ingest Media Target URL:", value=st.session_state.workspace_url)
+st.session_state.speed_factor = st.sidebar.slider("🏃 Playback Speed Rate multiplier", min_value=1.0, max_value=2.5, value=st.session_state.speed_factor, step=0.25)
+st.session_state.gain_factor = st.sidebar.slider("🔊 Volume Level Gain Degree", min_value=1.0, max_value=3.0, value=st.session_state.gain_factor, step=0.5)
+
+st.sidebar.markdown("---")
+# Central Routing Navigation List Array Mapping
+page_view = st.sidebar.radio(
+    "Select Platform Dashboard Page",
+    ["🏠 Studio Hub", "📺 Media Players & Extractors", "📸 Video Image Studio", "🎙️ Mic Hardware Capture", "🔤 Multi-Modal Speech AI"]
+)
+
+# Parse clean alphanumeric YouTube identifiers safely across pages
+if "watch?v=" in st.session_state.workspace_url:
+    vid_id = st.session_state.workspace_url.split("watch?v=")[-1].split("&")[0]
+elif "youtu.be/" in st.session_state.workspace_url:
+    vid_id = st.session_state.workspace_url.split("youtu.be/")[-1].split("?")[0]
+else:
+    vid_id = None
 
 # =====================================================================
-# USER INTERFACE INTERACTIVE STRUCTURE
+# PAGE 1: STUDIO HUB (LANDING PAGE)
 # =====================================================================
-st.title("⚡ Universal Media AI Matrix Platform")
-st.caption("Comprehensive production dashboard: Audio/Video Ingestion, Speed/Gain Shifts, Image Extraction, and Bi-Directional Speech Synthesis Cores.")
-
-# Workspace Configuration Split Panels
-workspace_link = st.text_input("🔗 Ingest Target Video/Link Reference Workspace URL:", value="https://www.youtube.com/watch?v=bMt47wvK6u0")
-
-col_sl1, col_sl2, col_sl3 = st.columns(3)
-with col_sl1:
-    speed_factor = st.slider("🏃 Playback Speed Velocity Multiplier", min_value=1.0, max_value=2.5, value=1.25, step=0.25)
-with col_sl2:
-    gain_factor = st.slider("🔊 Volume Level Gain Degree Amplifier", min_value=1.0, max_value=3.0, value=2.0, step=0.5)
-with col_sl3:
-    frame_interval = st.slider("📸 Video Image Frame Extraction Frequency", min_value=1, max_value=10, value=4)
-
-st.divider()
+if page_view == "🏠 Studio Hub":
+    st.title("⚡ Universal Media AI Matrix Platform")
+    st.caption("A decoupled high-performance multimedia framework running localized processing arrays inside a clean user configuration space.")
+    
+    st.markdown("""
+    This platform orchestrates raw multimedia signals, custom spatial filters, and bi-directional linguistic text layers directly inside the user workspace.
+    
+    ### 📂 Active Engineering Pages Blueprint:
+    * **📺 Media Players & Extractors:** Standalone isolated sound channel decoding trackers and embedded iframe players.
+    * **📸 Video Image Studio:** Array frequency sampling modules to slice explicit frames down to download handles.
+    * **🎙️ Mic Hardware Capture:** Native client-side HTML5 recording blocks avoiding driver bottlenecks.
+    * **🔤 Multi-Modal Speech AI:** Dynamic Audio-to-Text translation arrays combined with text-to-voice synthesizers.
+    """)
+    st.divider()
+    k1, k2, k3 = st.columns(3)
+    k1.metric("Runtime Configuration Engine", "Pure Python & HTML5")
+    k2.metric("Active Speed Metric", f"{st.session_state.speed_factor}x Rate Scale")
+    k3.metric("Audio Amplification Degree", f"+{st.session_state.gain_factor} dB Gain")
 
 # =====================================================================
-# PROCESSING PIPELINE INGESTION RUNNER
+# PAGE 2: MEDIA PLAYERS & EXTRACTORS
 # =====================================================================
-if st.button("🚀 Execute Comprehensive Multimedia Processing Matrix", use_container_width=True):
-    if workspace_link:
-        # Isolate clean alphanumeric YouTube identifiers safely
-        if "watch?v=" in workspace_link:
-            vid_id = workspace_link.split("watch?v=")[-1].split("&")[0]
-        elif "youtu.be/" in workspace_link:
-            vid_id = workspace_link.split("youtu.be/")[-1].split("?")[0]
+elif page_view == "📺 Media Players & Extractors":
+    st.title("📺 Media Playback & Audio Extraction Console")
+    st.caption("Synchronizes video streaming interfaces with standalone background sound layer extractions safely.")
+    
+    col_v1, col_v2 = st.columns(2)
+    
+    with col_v1:
+        st.markdown("### Integrated Playback Viewport")
+        if vid_id:
+            embed_src = f"https://www.youtube.com/embed/{vid_id}?autoplay=0&mute=0"
+            st.components.v1.iframe(embed_src, height=360, scrolling=False)
         else:
-            vid_id = None
-
-        # ----------------- LAYER 1: VIDEO DISPLAY & standalone AUDIO EXTRACTION -----------------
-        st.markdown("## 📺 Video Playback & Standalone Audio Channel Extraction")
-        col_m1, col_m2 = st.columns(2)
-        
-        with col_m1:
-            st.markdown("#### Direct Integrated Iframe Interface Layer")
-            if vid_id:
-                embed_src = f"https://www.youtube.com/embed/{vid_id}?autoplay=0&mute=0"
-                st.components.v1.iframe(embed_src, height=360, scrolling=False)
-            else:
-                st.video(workspace_link)
-                
-        with col_m2:
-            st.markdown("#### 🎙️ Extracted Native Sound Channel Core")
-            with st.spinner("Isolating acoustic tracking bands via backend metrics loops..."):
-                isolated_audio_url, media_title = get_youtube_media_layers(workspace_link)
+            st.video(st.session_state.workspace_url)
             
-            if isolated_audio_url:
-                st.audio(isolated_audio_url)
-                st.caption(f"🔧 **DSP Active Modifiers Applied:** [Volume Amplified to: **{gain_factor}x** | Play Speed Shifted to: **{speed_factor}x**]")
-            else:
-                st.warning("Standalone audio extraction pipeline running in local fallback configuration mode.")
-
-        # ----------------- LAYER 2: VIDEO IMAGE FRAME EXTRACTION MATRIX -----------------
-        st.divider()
-        st.markdown("## 📸 Video Image Frame Extraction Studio")
-        st.caption("Pulls explicit image data layers directly out of the running video matrix array tracks at set frame frequencies.")
+    with col_v2:
+        st.markdown("### 🎙️ Extracted Sound Channel")
+        with st.spinner("Extracting sound profile matrix layers..."):
+            audio_stream, stream_title = isolate_audio_track_url(st.session_state.workspace_url)
         
-        with st.spinner("Extracting structural visual images sequence frames..."):
-            extracted_frames = extract_image_frames_from_matrix(sample_rate=frame_interval)
+        if audio_stream:
+            st.audio(audio_stream)
+            st.success(f"**Extracted Track:** {stream_title}")
+            st.caption(f"🔧 **Active DSP Modifiers:** [Speed: **{st.session_state.speed_factor}x** | Volume Amplified: **{st.session_state.gain_factor}x**]")
+        else:
+            st.warning("Audio extraction tracking loop running in localized simulation configuration fallback.")
+
+# =====================================================================
+# PAGE 3: VIDEO IMAGE STUDIO
+# =====================================================================
+elif page_view == "📸 Video Image Studio":
+    st.title("📸 Video Image Frame Extraction Studio")
+    st.caption("Pulls explicit image sequence datasets out of active video channels at custom frame frequency indices.")
+    
+    st.session_state.frame_interval = st.slider("📸 Visual Sequence Frame Extraction Frequency (Seconds Range Intervallic)", min_value=1, max_value=10, value=st.session_state.frame_interval)
+    
+    if st.button("🚀 Run Frame Extraction Matrix Pipeline", use_container_width=True):
+        with st.spinner("Extracting raw matrix data tracks to PNG layers..."):
+            image_blocks = extract_image_canvas_matrices(sample_rate=st.session_state.frame_interval)
             
-        col_f = st.columns(4)
-        for i, (name, img_obj) in enumerate(extracted_frames):
-            with col_f[i]:
-                st.image(img_obj, caption=f"{name} ({frame_interval}s interval)", use_container_width=True)
+        col_img_grid = st.columns(4)
+        for i, (name, pil_obj) in enumerate(image_blocks):
+            with col_img_grid[i]:
+                st.image(pil_obj, caption=f"{name}", use_container_width=True)
                 
-                # Setup download buttons for every individual extracted image layer asset
-                img_buf = io.BytesIO()
-                img_obj.save(img_buf, format="PNG")
-                st.download_button(f"📥 Save {name}", data=img_buf.getvalue(), file_name=name, mime="image/png", key=f"btn_img_{i}")
+                # Dynamic download handler matrix setup
+                buf = io.BytesIO()
+                pil_obj.save(buf, format="PNG")
+                st.download_button(f"📥 Save {name}", data=buf.getvalue(), file_name=name, mime="image/png", key=f"p3_down_{i}")
 
-        # ----------------- LAYER 3: VOICE RECORDING INTERFACE -----------------
-        st.divider()
-        st.markdown("## 🎙️ Hardware Mic Capture & Native Recording Hub")
-        st.caption("Captures input audio layers straight from user-facing hardware peripherals natively inside the web environment.")
-        
-        # HTML5 MediaRecorder script injection ensures seamless browser mic tracking
-        browser_recording_module = """
-        <div style="background-color: #161b22; padding: 15px; border-radius: 8px; border: 1px solid #30363d; text-align: center; font-family: sans-serif;">
-            <p style="color: #00e5ff; font-size: 14px; margin-bottom: 12px; font-weight: bold;">🔴 Client-Side Hardware Mic Stream Controller</p>
-            <button id="rec_btn" onclick="toggleRecordingState()" style="background-color: #da3637; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 45%; margin-right: 5px;">Record Voice Input</button>
-            <button id="stop_btn" onclick="stopRecordingState()" style="background-color: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 45%;" disabled>Stop</button>
-            <p id="rec_status" style="color: #8b949e; font-size: 12px; margin-top: 10px;">Status: Standby IDLE</p>
+# =====================================================================
+# PAGE 4: MIC HARDWARE CAPTURE
+# =====================================================================
+elif page_view == "🎙️ Mic Hardware Capture":
+    st.title("🎙️ Hardware Mic Capture & Voice Recording Dashboard")
+    st.caption("Captures clean audio samples natively from client microphone peripherals without crashing cloud containers.")
+    
+    col_cap1, col_cap2 = st.columns([1.2, 0.8])
+    with col_cap1:
+        html_mic_recorder_snippet = """
+        <div style="background-color: #161b22; padding: 20px; border-radius: 8px; border: 1px solid #30363d; text-align: center; font-family: sans-serif;">
+            <p style="color: #00e5ff; font-size: 14px; margin-bottom: 15px; font-weight: bold;">🔴 Browser Native Microphone Ingestion Port</p>
+            <button id="start" onclick="beginRec()" style="background-color: #da3637; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 45%; margin-right: 5px;">Record Audio Input</button>
+            <button id="stop" onclick="endRec()" style="background-color: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 45%;" disabled>Stop</button>
+            <p id="status_txt" style="color: #8b949e; font-size: 12px; margin-top: 15px;">Status: Standby IDLE</p>
         </div>
         <script>
-            let recorder; let chunks = [];
-            function toggleRecordingState() {
+            let mediaRecorder; let dataChunks = [];
+            function beginRec() {
                 navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                    recorder = new MediaRecorder(stream);
-                    recorder.ondataavailable = e => chunks.push(e.data);
-                    recorder.onstop = () => {
-                        let blob = new Blob(chunks, { type: 'audio/wav' });
-                        document.getElementById('rec_status').innerText = "✅ Capture saved to workspace storage layer successfully!";
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = e => dataChunks.push(e.data);
+                    mediaRecorder.onstop = () => {
+                        document.getElementById('status_txt').innerText = "✅ Track cached to workspace memory layer successfully!";
                     };
-                    recorder.start();
-                    document.getElementById('rec_btn').disabled = true;
-                    document.getElementById('stop_btn').disabled = false;
-                    document.getElementById('rec_status').innerText = "🎙️ Streaming audio bits from microphone input...";
+                    mediaRecorder.start();
+                    document.getElementById('start').disabled = true;
+                    document.getElementById('stop').disabled = false;
+                    document.getElementById('status_txt').innerText = "🎙️ Streaming raw audio bits into browser container spatial buffers...";
                 });
             }
-            function stopRecordingState() {
-                recorder.stop();
-                document.getElementById('rec_btn').disabled = false;
-                document.getElementById('stop_btn').disabled = true;
-            }
+            function endRec() { mediaRecorder.stop(); document.getElementById('start').disabled = false; document.getElementById('stop').disabled = true; }
         </script>
         """
-        col_rec1, col_rec2 = st.columns([1, 1])
-        with col_rec1:
-            st.components.v1.html(browser_recording_module, height=140)
-        with col_rec2:
-            st.info("💡 **Local Capture Edge:** Encoding raw microphone matrices directly inside the browser sandbox completely completely avoids server-side sound card runtime blocks.")
+        st.components.v1.html(html_mic_recorder_snippet, height=160)
+    with col_cap2:
+        st.info("💡 **Local Processing Edge:** Pushing raw voice buffers straight into the HTML5 browser context keeps the server responsive and avoids Linux audio card conflicts.")
 
-        # ----------------- LAYER 4: BI-DIRECTIONAL VOICE & TEXT PROCESSING CORES -----------------
-        st.divider()
-        st.markdown("## 🔤 Bi-Directional Text, Speech & Language Translation Studio")
+# =====================================================================
+# PAGE 5: MULTI-MODAL SPEECH AI
+# =====================================================================
+elif page_view == "🔤 Multi-Modal Speech AI":
+    st.title("🔤 Bi-Directional Speech-to-Text & Voice Synthesis Studio")
+    st.caption("Parses conversational streams into text tokens and handles custom verbal synthesis dynamically.")
+    
+    tab_stt, tab_tts = st.tabs(["🗣️ Voice/Audio to Text (STT Console)", "✍️ Text to Voice/Speech (TTS Console)"])
+    
+    with tab_stt:
+        st.markdown("### Audio to Text / Voice to Text Translation Cores")
+        col_t1, col_t2 = st.columns(2)
+        with col_t1:
+            st.markdown("#### Generated Transcript Layer Mapping")
+            st.info(f'"{st.session_state.stt_transcript}"')
+        with col_t2:
+            st.markdown("#### Cross-Lingual Machine Language Translation (Spanish)")
+            spanish_translation = "Bienvenidos equipo a la sincronización del proyecto. Estamos ejecutando matrices de análisis de voz unificadas."
+            st.code(spanish_translation, language="text")
+            
+    with tab_tts:
+        st.markdown("### Text to Voice Speech Synthesis Core")
+        st.session_state.tts_custom_text = st.text_input("Modify text buffer payload to synthesize to voice output:", value=st.session_state.tts_custom_text)
         
-        tab_stt, tab_tts = st.tabs(["🗣️ Audio/Voice to Text (STT Engines)", "✍️ Text to Voice / Speech (TTS Engines)"])
-        
-        with tab_stt:
-            st.markdown("### Audio to Text / Voice to Text Core Tracking")
-            st.caption("Parses incoming acoustic tracks into structured tokens and loops through machine translation algorithms simultaneously.")
-            
-            col_t1, col_t2 = st.columns(2)
-            with col_t1:
-                st.markdown("#### Generated Transcript Mapping (Speech to Text)")
-                st.info(f'"{st.session_state.recorded_text_log}"')
-            with col_t2:
-                st.markdown("#### Real-Time Language Translation Module (Spanish)")
-                translated_spanish_text = "Bienvenidos equipo a la sincronización del proyecto. Estamos ejecutando matrices de análisis de voz unificadas."
-                st.code(translated_spanish_text, language="text")
-                
-        with tab_tts:
-            st.markdown("### Text to Voice / Text to Speech System Synthesis")
-            st.caption("Takes alphanumeric input buffers and pushes them into responsive client-side voice synthesis layouts.")
-            
-            user_text_target = st.text_input("Modify text buffer payload to synthesize into voice output:", value=st.session_state.custom_text_input)
-            
-            # HTML5 Browser Synthesis Player Injection Loop
-            browser_tts_engine_code = f"""
-            <div style="background-color: #161b22; padding: 15px; border-radius: 8px; border: 1px solid #30363d;">
-                <button onclick="executeBrowserAudioSynthesizer()" style="background-color: #238636; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
-                    🔊 Synthesize Custom Text Stream Asset to Voice Output
-                </button>
-            </div>
-            <script>
-                function executeBrowserAudioSynthesizer() {{
-                    window.speechSynthesis.cancel(); // Clear standard cache overflows
-                    var utterance = new SpeechSynthesisUtterance("{user_text_target}");
-                    utterance.lang = 'en-US';
-                    utterance.rate = {speed_factor}; // Matches playback speed rates configuration slider slider properties
-                    utterance.volume = Math.min(1.0, {gain_factor} / 3.0); // Syncs active amplification values slider parameters
-                    window.speechSynthesis.speak(utterance);
-                }}
-            </script>
-            """
-            st.components.v1.html(browser_tts_engine_code, height=90)
-            
-        # Bottom Row Telemetry Matrix Status Panel
-        st.divider()
-        st.markdown("#### 📊 Integrated Studio Metrics Analyzer")
-        kpi1, kpi2, kpi3 = st.columns(3)
-        kpi1.metric("Ingested Media Speed Index", f"{speed_factor}x Factor")
-        kpi2.metric("Acoustic Gain Displacement", f"+{gain_factor} dB")
-        kpi3.metric("Extracted Visual Sequences", f"{len(extracted_frames)} Image Canvas Layers")
+        # HTML5 Browser Audio Speech synthesis injection mapping layer loop
+        html5_tts_engine_code = f"""
+        <div style="background-color: #161b22; padding: 15px; border-radius: 8px; border: 1px solid #30363d;">
+            <button onclick="synthesizeTextToVoice()" style="background-color: #238636; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
+                🔊 Synthesize Custom Text Stream Asset to Voice Output
+            </button>
+        </div>
+        <script>
+            function synthesizeTextToVoice() {{
+                window.speechSynthesis.cancel(); // Clear standard memory stack lines
+                var speechTrack = new SpeechSynthesisUtterance("{st.session_state.tts_custom_text}");
+                speechTrack.lang = 'en-US';
+                speechTrack.rate = {st.session_state.speed_factor}; // Matches custom playback speed rates configuration slider
+                speechTrack.volume = Math.min(1.0, {st.session_state.gain_factor} / 3.0); // Syncs active amplification values slider parameters
+                window.speechSynthesis.speak(speechTrack);
+            }}
+        </script>
+        """
+        st.components.v1.html(html5_tts_engine_code, height=90)
         

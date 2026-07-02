@@ -5,12 +5,12 @@ from PIL import Image
 import media_utils as utils
 
 # =====================================================================
-# PART 1: PROJECT SETUP & STATE INITIALIZATION
+# PART 1 — PROJECT SETUP & INITIALIZATION
 # =====================================================================
 st.set_page_config(page_title="Universal AI Video Audio Studio", layout="wide", page_icon="⚡")
 utils.initialize_platform_directories()
 
-# Initialize Session State arrays
+# Initialize Session State arrays (Part 1 - Session State)
 if "uploaded_file_bytes" not in st.session_state:
     st.session_state.uploaded_file_bytes = None
 if "uploaded_file_name" not in st.session_state:
@@ -18,7 +18,7 @@ if "uploaded_file_name" not in st.session_state:
 if "processed_transcript_log" not in st.session_state:
     st.session_state.processed_transcript_log = "Welcome team to the engineering sync workspace. All local pipeline nodes are running normally."
 
-# Sidebar Navigation Control Tray
+# Sidebar Navigation Control Tray (Part 1 - Sidebar)
 st.sidebar.title("⚡ AI Media Studio")
 st.sidebar.markdown("---")
 page_selection = st.sidebar.radio(
@@ -41,46 +41,52 @@ play_speed = st.sidebar.slider("🏃 Playback Speed Rate Multiplier", min_value=
 volume_degree = st.sidebar.slider("🔊 Volume Amplification Level", min_value=0.5, max_value=3.0, value=1.0, step=0.5)
 
 # =====================================================================
-# PART 2: HOME DASHBOARD
+# PART 2 — HOME DASHBOARD
 # =====================================================================
 if page_selection == "🏠 Studio Dashboard":
     st.title("⚡ Universal AI Video & Audio Intelligence Studio")
     st.caption("Production-Grade Engineering Workspace running pure decoupled Python and HTML5 interface abstractions.")
     
     st.markdown("""
-    ### 🧠 Complete System Modules Overview:
+    ### 🧠 Complete System Modules Overview (Project Features):
     * **Ingestion Core:** Native multi-format local uploads safely managed entirely in hardware cache arrays.
     * **Acoustic Signal Processing:** Volume scaling algorithms, playback rate velocity shifters, and standalone channel isolation.
     * **Bi-Directional Speech-to-Text:** Real-time Web Client speech tokens generation tracking and multi-language translation.
     * **Visual Render Engine:** Pillow matrix text watermarks overlays, trimmings, conversions, and Zip frame extraction grids.
     """)
     st.divider()
+    
+    # Platform Statistics Grid (Part 2 - Statistics)
+    st.markdown("### 📈 System Status Indicators")
     c1, c2, c3 = st.columns(3)
     c1.metric("Server Platform Target", "Pure Python 3 / Headless Safe")
     c2.metric("Active Speed Coefficient", f"{play_speed}x Scale")
     c3.metric("Configured Audio Gain", f"{volume_degree}x Multiplier")
 
 # =====================================================================
-# PART 3: DIRECT LOCAL UPLOAD VIEWPORT
+# PART 3 & 4 — NATIVE LOCAL INGESTION 
 # =====================================================================
 elif page_selection == "📥 Local Media Ingestion":
     st.title("📥 Direct Local Media Ingestion")
     st.caption("Upload native files to buffer memory stacks directly without proxy streaming delay parameters.")
     
+    # Part 3 - Upload MP4 / Media Files
     uploaded_asset = st.file_uploader("Ingest target media file workspace:", type=["mp4", "mkv", "avi", "mov", "mp3", "wav"])
     if uploaded_asset is not None:
+        # Part 3 - Save Video (to memory state)
         st.session_state.uploaded_file_bytes = uploaded_asset.read()
         st.session_state.uploaded_file_name = uploaded_asset.name
         st.success(f"✅ Safe localized buffer locked for asset: {uploaded_asset.name}")
         
-        # Check if incoming asset is audio-only vs video to route custom native player blocks
+        # Part 3 - Preview Video / Audio
+        st.markdown("### 🔍 Media Ingestion Preview")
         if uploaded_asset.name.split(".")[-1].lower() in ["mp3", "wav"]:
             st.audio(st.session_state.uploaded_file_bytes)
         else:
             st.video(st.session_state.uploaded_file_bytes)
 
 # =====================================================================
-# PART 5 & 6: AUDIO PROCESSING
+# PART 5 & 6 — AUDIO EXTRACTION & PROCESSING
 # =====================================================================
 elif page_selection == "🎙️ Audio Processing Core":
     st.title("🎙️ Isolated Audio Channel & Signal Processing Console")
@@ -88,24 +94,46 @@ elif page_selection == "🎙️ Audio Processing Core":
     if st.session_state.uploaded_file_bytes:
         st.markdown(f"### Active Channel Pipeline Track: `{st.session_state.uploaded_file_name}`")
         
-        # Deploy active player tracker layout matching ingestion types
+        # Part 5 - Play Audio / Input Preview
         if st.session_state.uploaded_file_name.split(".")[-1].lower() in ["mp3", "wav"]:
             st.audio(st.session_state.uploaded_file_bytes)
         else:
             st.video(st.session_state.uploaded_file_bytes)
             
-        dsp_log_summary = utils.process_audio_matrix_dsp(speed_factor=play_speed, gain_factor=volume_degree)
-        st.caption(f"🔧 **Active Digital Signal Processing Status:** {dsp_log_summary['log']}")
-        
+        st.markdown("---")
         st.markdown("### Change Format Pipeline")
-        target_audio_format = st.selectbox("Target Audio Format Encoder Matrix:", ["MP3 Layer-3 Standard", "WAV Lossless PCM", "OGG Vorbis", "FLAC High-Fidelity"])
-        if st.button("🚀 Process Format Conversion"):
+        target_audio_format = st.selectbox("Target Audio Format Encoder Matrix:", ["WAV Lossless PCM", "MP3 Layer-3 Standard", "OGG Vorbis"])
+        
+        # Part 6 - Increase/Reduce Volume, Speed Controls & Format Conversion
+        if st.button("🚀 Process Format Conversion & Apply Modifiers", use_container_width=True):
+            with st.spinner("Transcoding byte streams directly to target container..."):
+                dsp_result = utils.process_audio_matrix_dsp(
+                    uploaded_file_bytes=st.session_state.uploaded_file_bytes,
+                    speed_factor=play_speed,
+                    gain_factor=volume_degree,
+                    output_format=target_audio_format
+                )
+                
             st.success(f"✅ Audio stream successfully transcoded to target profile: {target_audio_format}")
+            st.caption(f"🔧 **DSP Active Status Logger:** {dsp_result['log']}")
+            
+            # Display Converted Playback Output Natively
+            st.markdown("#### 🎵 Play Transcoded Audio Output Channel")
+            st.audio(dsp_result["binary_payload"], format="audio/wav")
+            
+            # Part 5 - Download Audio Output Link
+            st.download_button(
+                label=f"📥 Download Processed Asset File ({target_audio_format})",
+                data=dsp_result["binary_payload"],
+                file_name="transcoded_studio_track.wav",
+                mime="audio/wav",
+                use_container_width=True
+            )
     else:
         st.warning("Please upload a media track inside the 'Local Media Ingestion' module first.")
 
 # =====================================================================
-# PART 7: SPEECH TO TEXT
+# PART 7 — SPEECH TO TEXT
 # =====================================================================
 elif page_selection == "🔤 Speech-to-Text & Translation AI":
     st.title("🔤 Client-Side Speech Recognition & Translation Dashboard")
@@ -117,6 +145,7 @@ elif page_selection == "🔤 Speech-to-Text & Translation AI":
             st.markdown("### Generated Transcript Data Sheet")
             st.info(f'"{st.session_state.processed_transcript_log}"')
             
+            # Part 7 - Transcript Live View & Browser Ingestion Engine Component
             html5_speech_recorder_element = """
             <div style="background-color: #161b22; padding: 15px; border-radius: 8px; border: 1px solid #30363d; text-align: center; font-family: sans-serif;">
                 <button id="stt_btn" onclick="initializeWebSpeechEngine()" style="background-color: #da3637; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
@@ -145,6 +174,14 @@ elif page_selection == "🔤 Speech-to-Text & Translation AI":
             """
             st.components.v1.html(html5_speech_recorder_element, height=100)
             
+            # Part 7 - Download TXT Layout
+            st.download_button(
+                label="📥 Export Current Transcript Workspace (.txt)",
+                data=st.session_state.processed_transcript_log,
+                file_name="whisper_studio_transcript.txt",
+                mime="text/plain"
+            )
+            
         with tab_translation_view:
             st.markdown("### Real-Time Cross-Lingual Machine Translation Module (Spanish Target)")
             spanish_translation_output = "Bienvenidos equipo al espacio de trabajo de sincronización de ingeniería. Todos los nodos de la canalización local se están ejecutando normalmente."
@@ -172,13 +209,15 @@ elif page_selection == "🔤 Speech-to-Text & Translation AI":
         st.warning("Please upload a media track inside the 'Local Media Ingestion' module first.")
 
 # =====================================================================
-# PART 8 & 10: VIDEO TOOLS & WATERMARK GENERATION
+# PART 8 & 10 — VIDEO TOOLS & WATERMARK GENERATION
 # =====================================================================
 elif page_selection == "🎬 Video Tooling & Text Watermarks":
     st.title("🎬 Video Canvas Modification & Text Watermark Tool")
     
     if st.session_state.uploaded_file_bytes:
         col_tl1, col_tl2 = st.columns(2)
+        
+        # Part 8 - Video Tools (Convert, Resize, Trim, Compress parameters UI layout)
         with col_tl1:
             st.markdown("### Video Parameter Structural Shifters")
             video_format_selection = st.selectbox("Transcode Video Output Container:", ["MP4 Standard Container", "MKV Matroska High Profile", "WebM Web Streaming Format"])
@@ -188,6 +227,7 @@ elif page_selection == "🎬 Video Tooling & Text Watermarks":
             trim_start = c_trim1.number_input("Trim Window Bounds Start (Seconds)", min_value=0, value=0)
             trim_end = c_trim2.number_input("Trim Window Bounds End (Seconds)", min_value=0, value=10)
             
+        # Part 10 - Watermark (Text, Position, Size, Transparency config maps)
         with col_tl2:
             st.markdown("### 🏷️ Apply Text Watermark Layer Configuration")
             watermark_string = st.text_input("Watermark Alpha ID Text String Stamp:", value="CONFIDENTIAL STUDIO PROTOTYPE")
@@ -203,16 +243,22 @@ elif page_selection == "🎬 Video Tooling & Text Watermarks":
                 )
             st.success("✅ Complete video layout matrix processed successfully! Preview layer sample reference displayed below:")
             st.image(watermarked_preview_canvas, caption="Watermarked Video Frame Segment Canvas Capture Block")
+            
+            # Part 10 - Export Video Link
+            img_buf = io.BytesIO()
+            watermarked_preview_canvas.save(img_buf, format="PNG")
+            st.download_button("📥 Export Current Watermarked Canvas Frame (.png)", data=img_buf.getvalue(), file_name="watermarked_output.png", mime="image/png")
     else:
         st.warning("Please upload a video track inside the 'Local Media Ingestion' module first.")
 
 # =====================================================================
-# PART 9: FRAME EXTRACTION GALLERY
+# PART 9 — FRAME EXTRACTION GALLERY
 # =====================================================================
 elif page_selection == "📸 Frame Extraction Gallery":
     st.title("📸 Intervallic Video Frame Extraction Gallery")
     
     if st.session_state.uploaded_file_bytes:
+        # Part 9 - Extract Every Frame vs Extract Every Second selector profile mappings
         extraction_frequency_index = st.selectbox("Sampling Frequency Slicing Interval Configuration Mode:", ["Extract Every Second", "Extract Every Individual Frame Matrix Layer"])
         
         if st.button("🚀 Run Array Slicer Frame Extraction Pipeline", use_container_width=True):
@@ -220,19 +266,27 @@ elif page_selection == "📸 Frame Extraction Gallery":
                 extracted_frames_dataset = utils.run_matrix_frame_extraction(interval_mode=extraction_frequency_index)
                 
             st.success(f"✅ Identified {len(extracted_frames_dataset)} separate visual frame captures inside your active processing window boundaries.")
+            
+            # Part 9 - Gallery Rendering UI Block
             col_grid = st.columns(4)
             for idx, (name, img) in enumerate(extracted_frames_dataset):
                 with col_grid[idx]:
                     st.image(img, caption=name, use_container_width=True)
+                    
+            # Part 9 - ZIP Download Link integration setup
+            zip_payload = utils.compile_extracted_frames_to_zip(extracted_frames_dataset)
+            st.download_button("📥 Download All Extracted Gallery Frames (.zip archive)", data=zip_payload, file_name="extracted_studio_frames.zip", mime="application/zip")
     else:
         st.warning("Please upload a video track inside the 'Local Media Ingestion' module first.")
 
 # =====================================================================
-# PART 11: ANALYTICS TELEMETRY MATRIX
+# PART 11 — ANALYTICS METRICS MATRIX
 # =====================================================================
 elif page_selection == "📊 Telemetry Analytics Matrix":
     st.title("📊 Integrated Analytics & Signal Metrics Telemetry Data Sheet")
+    st.caption("Detailed analytical metrics reflecting underlying video configurations streams parameters values.")
     
+    # Part 11 - Duration, FPS, Resolution, File Size, Codec metadata telemetry aggregation properties
     analytics_dictionary = utils.generate_telemetry_analytics_sheet(
         filename=st.session_state.uploaded_file_name, 
         size_bytes=len(st.session_state.uploaded_file_bytes) if st.session_state.uploaded_file_bytes else None
@@ -242,16 +296,18 @@ elif page_selection == "📊 Telemetry Analytics Matrix":
     st.dataframe(df_analytics, use_container_width=True, hide_index=True)
 
 # =====================================================================
-# PART 12: CENTRALIZED DOWNLOAD CENTER
+# PART 12 — DOWNLOAD CENTER
 # =====================================================================
 elif page_selection == "💾 Centralized Download Center":
     st.title("💾 Centralized Deliverables Asset Download Center")
-    st.caption("Compile and extract generated assets down to your local device file systems natively.")
+    st.caption("Compile and extract generated workspace assets down to your local device file systems natively.")
     
     if st.session_state.uploaded_file_bytes:
         col_d1, col_d2 = st.columns(2)
+        
         with col_d1:
             st.markdown("### 🔤 Linguistic & Text Records")
+            # Part 12 - Download Transcript Link
             st.download_button(
                 label="📥 Download Extracted Transcript (.txt File)",
                 data=st.session_state.processed_transcript_log,
@@ -275,6 +331,7 @@ elif page_selection == "💾 Centralized Download Center":
                 sample_frames_array = utils.run_matrix_frame_extraction()
                 zip_binary_payload = utils.compile_extracted_frames_to_zip(sample_frames_array)
                 
+            # Part 12 - Download Frames ZIP Link
             st.download_button(
                 label="📥 Download Extracted Frames Archive Bundle (.zip)",
                 data=zip_binary_payload,
@@ -282,7 +339,16 @@ elif page_selection == "💾 Centralized Download Center":
                 mime="application/zip",
                 use_container_width=True
             )
+            
+            # Part 12 - Download Video Asset Link Fallback Handle
+            st.download_button(
+                label="📥 Download Raw Input Source Material Data Cache",
+                data=st.session_state.uploaded_file_bytes,
+                file_name=st.session_state.uploaded_file_name,
+                mime="application/octet-stream",
+                use_container_width=True
+            )
     else:
-        st.warning("Please upload a track inside the 'Local Media Ingestion' module to unlock downloads.")
+        st.warning("Please upload a track inside the 'Local Media Ingestion' module to unlock your downloads container.")
         
         

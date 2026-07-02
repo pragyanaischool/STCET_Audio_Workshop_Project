@@ -1,0 +1,9 @@
+streamlit
+yt-dlp
+transformers
+torch
+timm
+numpy
+pillow
+pandas
+scikit-learn

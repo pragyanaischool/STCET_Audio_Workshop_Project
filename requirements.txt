@@ -7,3 +7,15 @@ numpy
 pillow
 pandas
 scikit-learn
+streamlit
+pillow
+moviepy
+imageio
+imageio-ffmpeg
+pydub
+faster-whisper
+ultralytics
+torch
+numpy
+ffmpeg-python
+yt-dlp

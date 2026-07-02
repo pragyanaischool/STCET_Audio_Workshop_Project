@@ -10,7 +10,7 @@ import media_utils as utils
 st.set_page_config(page_title="Universal AI Video Audio Studio", layout="wide", page_icon="⚡")
 utils.initialize_platform_directories()
 
-# Persistent Session State Variable Key Mapping Locks
+# Initialize Session State arrays
 if "target_media_url" not in st.session_state:
     st.session_state.target_media_url = "https://www.youtube.com/watch?v=bMt47wvK6u0"
 if "uploaded_file_bytes" not in st.session_state:
@@ -20,7 +20,7 @@ if "uploaded_file_name" not in st.session_state:
 if "processed_transcript_log" not in st.session_state:
     st.session_state.processed_transcript_log = "Welcome team to the engineering sync workspace. All local pipeline nodes are running normally."
 
-# Sidebar Navigation Router Control Panel
+# Sidebar Navigation Control Tray
 st.sidebar.title("⚡ AI Media Studio")
 st.sidebar.markdown("---")
 page_selection = st.sidebar.radio(
@@ -37,14 +37,10 @@ page_selection = st.sidebar.radio(
     ]
 )
 
-# Shared Global UI Modifiers panel placed lower down the sidebar navigation tray
 st.sidebar.markdown("---")
 st.sidebar.header("🎛️ Shared Core Modifiers")
 play_speed = st.sidebar.slider("🏃 Playback Speed Rate Multiplier", min_value=0.5, max_value=2.0, value=1.0, step=0.25)
 volume_degree = st.sidebar.slider("🔊 Volume Amplification Level", min_value=0.5, max_value=3.0, value=1.0, step=0.5)
-
-# Isolate YouTube targets globally to make them accessible inside any functional tab layout block
-active_vid_id = utils.extract_clean_youtube_id(st.session_state.target_media_url)
 
 # =====================================================================
 # PART 2: HOME DASHBOARD
@@ -67,7 +63,7 @@ if page_selection == "🏠 Studio Dashboard":
     c3.metric("Configured Audio Gain", f"{volume_degree}x Multiplier")
 
 # =====================================================================
-# PART 3 & 4: UPLOAD & DOWNLOAD FROM URL
+# PART 3 & 4: UPLOAD & DOWNLOAD FROM URL (FIXED PLAYER INITIALIZATION)
 # =====================================================================
 elif page_selection == "📥 Ingestion & Media URL Download":
     st.title("📥 Multi-Source Media Ingestion Module")
@@ -84,12 +80,18 @@ elif page_selection == "📥 Ingestion & Media URL Download":
             
     with tab_remote:
         st.session_state.target_media_url = st.text_input("🔗 Ingest Target Video Link (YouTube/Direct Link Stream):", value=st.session_state.target_media_url)
+        
+        # FIXED: Extracting the target video key inline to prevent navigation losses
+        active_vid_id = utils.extract_clean_youtube_id(st.session_state.target_media_url)
+        
         if active_vid_id:
             st.markdown("#### Embedded Streaming Viewport Frame")
             embed_player_html = f"""
-            <iframe width="100%" height="360" src="https://www.youtube.com/embed/{active_vid_id}" 
-                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
-                style="border-radius:12px; border:1px solid #30363d;">
+            <iframe width="100%" height="360" 
+                src="https://www.youtube.com/embed/{active_vid_id}" 
+                title="YouTube video player" frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                style="border-radius:12px; border: 1px solid #30363d;">
             </iframe>
             """
             st.components.v1.html(embed_player_html, height=380)
@@ -109,9 +111,8 @@ elif page_selection == "🎙️ Audio Extractor & Processing Core":
         st.success(f"**Isolated Sound Asset Title:** `{stream_title}`")
         st.audio(direct_audio_stream)
         
-        # Apply local DSP calculations variables log tracking
-        dsp_log_summary = utils.compute_simulated_audio_dsp(speed=play_speed, gain=volume_degree)
-        st.caption(f"🔧 **Active Digital Signal Processing Status:** {dsp_log_summary}")
+        dsp_log_summary = utils.process_audio_matrix_dsp(speed_factor=play_speed, gain_factor=volume_degree)
+        st.caption(f"🔧 **Active Digital Signal Processing Status:** {dsp_log_summary['log']}")
         
         st.markdown("### Change Format Pipeline")
         target_audio_format = st.selectbox("Target Audio Format Encoder Matrix:", ["MP3 Layer-3 Standard", "WAV Lossless PCM", "OGG Vorbis", "FLAC High-Fidelity"])
@@ -123,7 +124,7 @@ elif page_selection == "🎙️ Audio Extractor & Processing Core":
 # =====================================================================
 # PART 7: SPEECH TO TEXT
 # =====================================================================
-elif page_selection == "🔤 Multi-Modal Speech AI":
+elif page_selection == "🔤 Speech-to-Text & Translation AI":
     st.title("🔤 Client-Side Speech Recognition & Translation Dashboard")
     
     tab_stt_view, tab_translation_view = st.tabs(["🗣️ Speech-to-Text Transcript", "🌐 Cross-Lingual Machine Translation"])
@@ -132,7 +133,6 @@ elif page_selection == "🔤 Multi-Modal Speech AI":
         st.markdown("### Generated Transcript Data Sheet")
         st.info(f'"{st.session_state.processed_transcript_log}"')
         
-        # HTML5 Live Native Browser Speech Capture Widget (Bypasses local device sound card blocks completely)
         html5_speech_recorder_element = """
         <div style="background-color: #161b22; padding: 15px; border-radius: 8px; border: 1px solid #30363d; text-align: center; font-family: sans-serif;">
             <button id="stt_btn" onclick="initializeWebSpeechEngine()" style="background-color: #da3637; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
@@ -166,7 +166,6 @@ elif page_selection == "🔤 Multi-Modal Speech AI":
         spanish_translation_output = "Bienvenidos equipo al espacio de trabajo de sincronización de ingeniería. Todos los nodos de la canalización local se están ejecutando normalmente."
         st.code(spanish_translation_output, language="text")
         
-        # Browser-based localized speech generation module matching slider parameters
         html5_tts_engine_script = f"""
         <div style="background-color: #161b22; padding: 15px; border-radius: 8px; border: 1px solid #30363d; text-align: center;">
             <button onclick="triggerBrowserSpeechEngine()" style="background-color: #238636; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
